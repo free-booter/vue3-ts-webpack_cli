@@ -2,9 +2,10 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { VueLoaderPlugin } from "vue-loader";
 import { DefinePlugin } from "webpack";
+import DotenvPlugin from "dotenv-webpack";
 
 const config = {
-  mode: "development",
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
   // 配置入口
   entry: "./src/main.ts",
   // 配置出口
@@ -17,7 +18,13 @@ const config = {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
+        use: {
+          loader: "ts-loader",
+          options: {
+            appendTsSuffixTo: [/\.vue$/], //这行很重要，用于处理 Vue 文件中的 TypeScript
+            transpileOnly: true,
+          },
+        },
         exclude: /node_modules/,
       },
       {
@@ -59,12 +66,31 @@ const config = {
       template: "./public/index.html",
     }),
     new VueLoaderPlugin(),
-    new DefinePlugin({
-      __VUE_OPTIONS_API__: JSON.stringify(false), // 是否开启 Options API（Vue2 风格）
-      __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // 生产环境是否开启 devtools 支持
-      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // SSR hydration mismatch 报错详情
+    new DotenvPlugin({
+      path: `./.env.${process.env.NODE_ENV || "development"}`,
+      systemvars: true,
     }),
   ],
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+      cacheGroups: {
+        vendors: {
+          name: "vendors",
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          chunks: "initial",
+        },
+        common: {
+          name: "common",
+          minChunks: 2,
+          priority: -20,
+          chunks: "initial",
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
 };
 
 export default config;
