@@ -1,17 +1,22 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { VueLoaderPlugin } from "vue-loader";
-import { DefinePlugin } from "webpack";
 import DotenvPlugin from "dotenv-webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+
+const isProd = process.env.NODE_ENV === "production";
 
 const config = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   // 配置入口
   entry: "./src/main.ts",
+  devtool: "eval-cheap-module-source-map",
   // 配置出口
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "js/[name]_[chunkhash:8].js",
+    assetModuleFilename: "assets/[hash][ext][query]",
+    chunkFilename: "js/[name]_[chunkhash:8].js",
     clean: true,
   },
   module: {
@@ -35,7 +40,7 @@ const config = {
       {
         test: /\.(css|scss)$/,
         use: [
-          "style-loader",
+          isProd ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
           {
             loader: "postcss-loader",
@@ -52,6 +57,9 @@ const config = {
   },
   resolve: {
     extensions: [".ts", ".js", ".vue", ".json"],
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+    },
   },
   devServer: {
     static: {
@@ -70,6 +78,11 @@ const config = {
       path: `./.env.${process.env.NODE_ENV || "development"}`,
       systemvars: true,
     }),
+    isProd &&
+      new MiniCssExtractPlugin({
+        filename: "css/[name]_[chunkhash:8].css",
+        chunkFilename: "css/[name]_[id].[contenthash:8].css",
+      }),
   ],
   optimization: {
     splitChunks: {
@@ -87,6 +100,19 @@ const config = {
           priority: -20,
           chunks: "initial",
           reuseExistingChunk: true,
+        },
+        routeComponents: {
+          name(module: any) {
+            const match = module
+              .identifier()
+              .match(/src[\\/]views[\\/]([^\\/]+)\.vue$/);
+            return match ? match[1].toLowerCase() : "route";
+          },
+          test: /[\\/]src[\\/]views[\\/].*\.vue$/,
+          chunks: "async",
+          priority: -5,
+          reuseExistingChunk: true,
+          enforce: true,
         },
       },
     },
