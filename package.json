@@ -14,7 +14,7 @@
   "dependencies": {
     "@vueuse/core": "^13.2.0",
     "axios": "^1.9.0",
-    "dayjs": "^1.11.13",
+    "lodash": "^4.17.21",
     "pinia": "^3.0.2",
     "sass-loader": "^16.0.5",
     "vue": "^3.5.14",
@@ -29,7 +29,9 @@
     "@types/webpack-dev-server": "^4.7.2",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
+    "dayjs": "^1.11.13",
     "dotenv-webpack": "^8.1.0",
+    "echarts": "^5.6.0",
     "html-webpack-plugin": "^5.6.3",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss-loader": "^8.1.1",

@@ -53,6 +53,13 @@ const config = {
           "sass-loader",
         ],
       },
+      {
+        test: /\.(mp3|wav)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "audio/[name][ext]",
+        },
+      },
     ],
   },
   resolve: {
@@ -83,7 +90,7 @@ const config = {
         filename: "css/[name]_[chunkhash:8].css",
         chunkFilename: "css/[name]_[id].[contenthash:8].css",
       }),
-  ],
+  ].filter(Boolean),
   optimization: {
     splitChunks: {
       chunks: "all",

@@ -8,16 +8,24 @@ import { RouterView, RouterLink } from 'vue-router';
       <div class="nav-brand">Vue3 Todo</div>
       <div class="nav-links">
         <RouterLink to="/" class="nav-link">
-          <i class="fas fa-chart-line"></i>
-          仪表盘
+          <i class="fas fa-home"></i>
+          首页
         </RouterLink>
         <RouterLink to="/todos" class="nav-link">
           <i class="fas fa-tasks"></i>
           待办事项
         </RouterLink>
+        <RouterLink to="/archive" class="nav-link">
+          <i class="fas fa-archive"></i>
+          任务归档
+        </RouterLink>
+        <RouterLink to="/categories" class="nav-link">
+          <i class="fas fa-tags"></i>
+          分类管理
+        </RouterLink>
         <RouterLink to="/statistics" class="nav-link">
           <i class="fas fa-chart-bar"></i>
-          统计
+          统计分析
         </RouterLink>
         <RouterLink to="/settings" class="nav-link">
           <i class="fas fa-cog"></i>
